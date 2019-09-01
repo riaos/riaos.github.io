@@ -62,129 +62,6 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mark" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/09/01/mark/" class="article-date">
-  <time datetime="2019-09-01T12:17:35.304Z" itemprop="datePublished">2019-09-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="face-recognition-from-rtmp"><a href="#face-recognition-from-rtmp" class="headerlink" title="face_recognition_from_rtmp"></a>face_recognition_from_rtmp</h1><p>This project is hosted by Hohai University Robotics motion and vision Lab by National Defense Student. As its name meaning, we release a stable solution on face_recognition through RTMP. Before starting this project, we accumulate abundant practical experience on real-time video transmission system based on RTMP, which has been applied in <a href="https://github.com/ZhuChaozheng/dog_project" target="_blank" rel="noopener">dog_project</a>. As we all known, RTMP is the best method for live video, since it has minimum delay time than other solutions (e.g. RTSP). Also, to obtain better result in face recognition, we call many functions on <a href="https://github.com/ageitgey/face_recognition" target="_blank" rel="noopener">Johe</a>‘s C++ library. As you can see, it will draw a rectangle to contain someone face and name him below this rectangle.</p>
-<h2 id="Get-Started"><a href="#Get-Started" class="headerlink" title="Get Started"></a>Get Started</h2><p>first it’s only for linux and PI, not windows or mac</p>
-<p>This project is based on other famous project <a href="https://github.com/ageitgey/face_recognition" target="_blank" rel="noopener">face_recognition</a></p>
-<p>you may should have read that before</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pip3 install cycler==0.10.0 kiwisolver==1.0.1 matplotlib==2.2.2 numpy==1.14.2 opencv-python==3.4.0.12 pyparsing==2.2.0 python-dateutil==2.7.2 pytz==2018.4 six==1.11.0</span><br><span class="line"></span><br><span class="line">pip3 install dlib</span><br><span class="line"></span><br><span class="line">pip3 install face_recognition</span><br><span class="line"></span><br><span class="line">git clone https://github.com/ZhuChaozheng/face_recognition_from_rtmp</span><br><span class="line"></span><br><span class="line">python3 face_recognition_from_rtmp.py --cpus 4</span><br></pre></td></tr></table></figure>
-
-<h3 id="Parrallel-Compute"><a href="#Parrallel-Compute" class="headerlink" title="Parrallel Compute"></a>Parrallel Compute</h3><p>you can also set the argument to equal with your cpu cores. <em><code>e.g. --cpus 40</code></em></p>
-<h3 id="Multi-Video-Input"><a href="#Multi-Video-Input" class="headerlink" title="Multi-Video-Input"></a>Multi-Video-Input</h3><p>we can easy to realize multi video sources input by using command line, set the argument –rtmp. <em><code>e.g. --rtmp 192.168.1.117/2710/live</code></em> </p>
-<h2 id="How-to-push-your-own-video"><a href="#How-to-push-your-own-video" class="headerlink" title="How to push your own video"></a>How to push your own video</h2><h3 id="server"><a href="#server" class="headerlink" title="server"></a>server</h3><p>the most easiest way is to use <a href="https://github.com/ossrs/srs/wiki/v1_CN_SampleRTMP" target="_blank" rel="noopener">srs</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/ossrs/srs</span><br><span class="line"></span><br><span class="line">cd srs/trunk</span><br><span class="line"></span><br><span class="line">git pull</span><br><span class="line"></span><br><span class="line">./configure &amp;&amp; make</span><br></pre></td></tr></table></figure>
-
-<p>modify the <em>conf</em> file</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># conf/rtmp.conf</span><br><span class="line">listen              1935;</span><br><span class="line">max_connections     1000;</span><br><span class="line">vhost __defaultVhost__ &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>start you srs server,and you may should set this self-start for convince as background 并且为了方便你最好能够设置为后台自启动</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./objs/srs -c conf/rtmp.conf &amp;</span><br></pre></td></tr></table></figure>
-
-<h3 id="client"><a href="#client" class="headerlink" title="client"></a>client</h3><h4 id="prepare-for-gst-搭建gst环境"><a href="#prepare-for-gst-搭建gst环境" class="headerlink" title="prepare for gst 搭建gst环境"></a>prepare for gst 搭建gst环境</h4><p>1.Configure the camera 配置摄像头</p>
-<p>Be careful not to hot-plug the camera </p>
-<p>enter the configuration page 进入配置页面</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo raspi-config</span><br></pre></td></tr></table></figure>
-
-<p>Then Click Interfacing Options，Camera，enable，finish  one by one</p>
-<p>Reboot prompted after configuration is complete </p>
-<p>then</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">raspistill -t 2000 -o image_test.jpg</span><br></pre></td></tr></table></figure>
-
-<p>to make sure the camera work normally(image_test.jpg will be generated in the current directory )</p>
-<p>if not，maybe you should update</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
-
-<p>2.install NGINX and RTMP</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get -y install nginx</span><br><span class="line">sudo apt-get -y remove nginx</span><br><span class="line">sudo apt-get clean</span><br><span class="line">sudo rm -rf /etc/nginx/*</span><br><span class="line">sudo apt-get install -y curl build-essential libpcre3 libpcre3-dev libpcre++-dev zlib1g-dev libcurl4-openssl-dev libssl-dev</span><br><span class="line">sudo mkdir -p /var/www</span><br><span class="line">mkdir -p ~/nginx_src</span><br><span class="line">cd ~/nginx_src</span><br><span class="line">wget http://nginx.org/download/nginx-1.11.8.tar.gz</span><br><span class="line">wget https://github.com/arut/nginx-rtmp-module/archive/master.zip</span><br><span class="line">tar -zxvf nginx-1.11.8.tar.gz</span><br><span class="line">unzip master.zip</span><br><span class="line">cd nginx-1.11.8</span><br><span class="line">./configure --prefix=/var/www --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-http_ssl_module --without-http_proxy_module --add-module=/home/pi/nginx_src/nginx-rtmp-module-master</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
-
-<p>then</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -v</span><br></pre></td></tr></table></figure>
-
-<p>If version information is displayed, success is indicated. </p>
-<p>Modification of NGINX<br>/etc/nginx/nginx.conf<br>add at the end </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">rtmp &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen 1935;</span><br><span class="line">        chunk_size 4096;</span><br><span class="line">        application live &#123;</span><br><span class="line">            live on;</span><br><span class="line">            record off;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>restart nginx</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure>
-
-<p>3.install avconv and GStreamer</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libav-tools</span><br><span class="line">sudo apt-get install gstreamer1.0-tools</span><br><span class="line">sudo apt-get  install libgstreamer1.0-0 libgstreamer1.0-0-dbg libgstreamer1.0-dev liborc-0.4-0 liborc-0.4-0-dbg liborc-0.4-dev liborc-0.4-doc gir1.2-gst-plugins-base-1.0 gir1.2-gstreamer-1.0 gstreamer1.0-alsa gstreamer1.0-doc gstreamer1.0-omx gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-dbg gstreamer1.0-plugins-bad-doc gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-base-dbg gstreamer1.0-plugins-base-doc gstreamer1.0-plugins-good gstreamer1.0-plugins-good-dbg gstreamer1.0-plugins-good-doc gstreamer1.0-plugins-ugly gstreamer1.0-plugins-ugly-dbg gstreamer1.0-plugins-ugly-doc gstreamer1.0-pulseaudio gstreamer1.0-tools gstreamer1.0-x libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-base1.0-0 libgstreamer-plugins-base1.0-dev</span><br></pre></td></tr></table></figure>
-
-<p>Replacement of software source if download speed is too slow  若是太慢的更换软件源</p>
-<p>4.Then you can run the following statement  之后就可以运行如下语句了</p>
-<p>for pi use default camera(not USB camera)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gst-launch-1.0 -v v4l2src ! &apos;video/x-raw, width=640, height=480, framerate=30/1&apos; ! queue ! videoconvert ! omxh264enc !  h264parse ! flvmux ! rtmpsink location=&apos;rtmp://&#123;your server IP&#125;/rtmp/live live=1&apos;</span><br></pre></td></tr></table></figure>
-
-<p>for Ubuntu PC</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libav-tools</span><br><span class="line">avconv -f video4linux2 -r 24 -i /dev/video0 -f flv rtmp://&#123;your server IP&#125;:1935/rtmp/live</span><br></pre></td></tr></table></figure>
-
-<p>Then your RTMP stream is <code>rtmp://{your server IP}/live/livestream</code></p>
-<p>Video can be pushed to any location that supports RTMP protocol by changing the location value  通过更改location的值可以将视频推到任何一个支持rtmp协议的位置</p>
-<h4 id="set-self-start-（use-pi-as-an-example）"><a href="#set-self-start-（use-pi-as-an-example）" class="headerlink" title="set self-start （use pi as an example）"></a>set self-start （use pi as an example）</h4><p>we can just use the GST statement to push video，but should set this self-start for convince</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~/Documents</span><br><span class="line">nano vide.sh</span><br></pre></td></tr></table></figure>
-
-<p>content is</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">gst-launch-1.0 -v v4l2src ! &apos;video/x-raw, width=640, height=480, framerate=30/1&apos; ! queue ! videoconvert ! omxh264enc !  h264parse ! flvmux ! rtmpsink location=&apos;rtmp://192.168.1.117/2710/live live=1&apos;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano revideo.sh</span><br></pre></td></tr></table></figure>
-
-<p>content is</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">while true</span><br><span class="line">do</span><br><span class="line">ps -ef | grep &quot;gst-launch-1.0&quot; | grep -v &quot;grep&quot;</span><br><span class="line">if [ &quot;$?&quot; -eq 1 ]</span><br><span class="line">then</span><br><span class="line">sh /home/pi/Documents/video.sh &amp; </span><br><span class="line">echo &quot;process has been restarted!&quot;</span><br><span class="line">else</span><br><span class="line">echo &quot;process already started!&quot;</span><br><span class="line">fi</span><br><span class="line">sleep 20</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p>Set permissions </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 video.sh</span><br><span class="line">chmod 777 revideo.sh</span><br></pre></td></tr></table></figure>
-
-<p>move to the special directory</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv revideo.sh /etc/profile.d</span><br></pre></td></tr></table></figure>
-
-<p>thus the statement will be run when the pi start</p>
-<h4 id="Setting-up-static-IP（use-pi-as-an-example）-设置静态ip"><a href="#Setting-up-static-IP（use-pi-as-an-example）-设置静态ip" class="headerlink" title="Setting up static IP（use pi as an example） 设置静态ip"></a>Setting up static IP（use pi as an example） 设置静态ip</h4><p>if not, you may run normally, but if the IP changes, you should change the code, too</p>
-<p>Remember to have a monitor and a mouse, keyboard ready. Once the static IP is connected, it will not automatically connect to the wireless network. 记得准备好显示器和鼠标键盘，一旦连接好静态ip就不会自动连上无线网</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/network/interfaces</span><br></pre></td></tr></table></figure>
-
-<p>First comment out the original command, then add a new command: 然后编辑网络的配置命令，先将原先的命令注释掉，然后添加新的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">auto eth0</span><br><span class="line">iface eth0 inet static</span><br><span class="line">address 192.168.1.108  IP address you want to set </span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.1.1</span><br></pre></td></tr></table></figure>
-
-<p>Connect ubuntu(server), pi(client) to switch  将ubuntu，pi都分别用网线与交换机相连</p>
-<p>at server, input</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping 192.168.1.108 IP address you want to set</span><br></pre></td></tr></table></figure>
-
-<h4 id="at-last"><a href="#at-last" class="headerlink" title="at last"></a>at last</h4><p>When all these preparations have been completed, and as an example, we used <em>‘’–rtmp 192.168.1.117/2710/live’’</em></p>
-<p>if you didn’nt set self-start, you need to have run <em>‘’ ./objs/srs -c conf/rtmp.conf’’</em> first,and then <em>‘’sh /home/pi/Documents/video.sh’’</em></p>
-<p>put your image into <em>‘’face_recognition_from_rtmp-master/known_people/‘’</em></p>
-<p>and rename the picture by his/her name or what you would like to display</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 training_face_encodings.py</span><br></pre></td></tr></table></figure>
-
-<p>this is to create the model</p>
-<p>Enter the graphical interface and run </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 facerec_from_rtmp_2710.py</span><br></pre></td></tr></table></figure>
-
-<p>the video will be pushed and it will draw a rectangle to contain someone face and the name of the picture below this rectangle</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/01/mark/" data-id="ck00xxip40001woazvzzja8dn" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/31/hello-world/" class="article-date">
@@ -224,7 +101,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/31/hello-world/" data-id="ck00xxiok0000woazzdx88kl8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/31/hello-world/" data-id="ck00xyzbv0000ywazxy0ynr7r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -252,7 +129,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
@@ -263,10 +140,6 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/2019/09/01/mark/">(no title)</a>
-          </li>
         
           <li>
             <a href="/2019/08/31/hello-world/">Hello World</a>
